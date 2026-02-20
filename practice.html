@@ -1,0 +1,35 @@
+<html>
+<head>
+  <title>Times Table & Temperature Conversion</title>
+</head>
+
+<body>
+  <script>
+    function timesTable(number) {
+      for (i=1; i<=12; i++) {
+      document.write(number + " x " + i + " = " + (number*i) + "<br>");
+      }
+    }
+    userNumber = prompt("Enter a number:");
+    userNumber = Number(userNumber);
+    timesTable(userNumber);
+  </script>
+
+  <hr />
+
+  <script>
+    function fahr2cels(ftemp) {
+      return (ftemp - 32) * 5/9;
+      }
+    userFtemp = prompt("Enter a temperature in Fahrenheit:");
+    userFtemp = Number(userFtemp);
+    celsTemp = fahr2cels(userFtemp);
+    document.write(userFtemp + " degrees Fahrenheit is " + celsTemp.toFixed(0) + " degrees Celsius<br>");
+
+    //Other values from Fahrenheit to Celsius
+    document.write("Freezing: 32 degrees Fahrenheit = " + fahr2cels(32).toFixed(0) + " degrees Celsius<br>");
+    document.write("Boiling: 212 degrees Fahrenheit = " + fahr2cels(212).toFixed(0) + " degrees Celsius<br>");
+  </script>
+
+</body>
+</html>
