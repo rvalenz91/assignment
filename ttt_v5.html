@@ -1,0 +1,160 @@
+<html>  
+<head>
+  <title>Tic Tac Toe Game</title>
+  <style type="text/css">
+    h1 {
+      text-align:center;
+    }
+
+    .tictactoelink {text-align: center;}
+
+    .startgame {text-align: center;}
+
+    .square {
+      border: 1px solid black;
+      height: 100px;
+      width: 100px;
+      max-width: 350px;
+      background-color: white;
+      text-align: center;
+      display: inline-block;
+      vertical-align: top;
+      margin: 5px 5px 5px 5px;
+      margin-left: 5px;
+      margin-right: 5px;
+      box-sizing: border-box;
+      align-content: center;
+      font-size: 45px;
+      font-weight: bold;
+    }
+
+    #box-container {
+      text-align: center;
+      width: 350px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .square:hover {
+      background-color:antiquewhite;
+    }
+
+    .turnBox {
+      text-align: center;
+      background-color: rgb(203, 22, 22);
+      color: white;
+      border: 1px solid black;
+      height: 30px;
+      width: 80px;
+      align-content: center;
+      margin-left: auto;
+      margin-right: auto;
+      font-weight: bold;
+    }
+  </style>
+</head>
+    
+<body>
+  <h1>Tic Tac Toe Game</h1>
+
+  <hr />
+
+  <div class="tictactoelink">
+    <a href="https://en.wikipedia.org/wiki/Tic-tac-toe" target="_blank">
+      How to Play?</a>
+  </div> <!-- end box -->
+
+  <hr />
+
+  <div id="box-container">
+  <script>
+    const NUM_SQUARES = 9;
+    for (let i=0; i<NUM_SQUARES; i++) {
+    let id = "sq"+i;
+    document.write( "<div class='square' id='" + id + "'></div>" );
+  }
+  </script>
+  </div> <!-- end box container-->
+
+  <script>
+    window.onload = function() {
+      let currentPlayer = Math.random() < 0.5 ? "X" : "O";
+      const turnBox = document.querySelector(".turnBox");
+      turnBox.innerHTML = currentPlayer + "'s Turn";
+
+      let gameOver = false; // prevent moves after win/stalemate
+      for (let i=0; i<NUM_SQUARES; i++) {
+        let square = document.getElementById("sq" + i);
+        square.onclick = function() {
+          if (gameOver) return; // stop if finished
+          if (this.innerHTML !== "") {
+            return;
+          }
+
+          this.innerHTML = currentPlayer;
+
+          // Moves array using forEach
+          let moves = [];
+          document.querySelectorAll(".square").forEach(function(sq){
+            let value = sq.innerText;
+            moves.push(value === "" ? "-" : value);
+          });
+
+          // winConditions as strings
+          let winConditions = [
+            moves[0] + moves[1] + moves[2],
+            moves[3] + moves[4] + moves[5],
+            moves[6] + moves[7] + moves[8],
+            moves[0] + moves[3] + moves[6],
+            moves[1] + moves[4] + moves[7],
+            moves[2] + moves[5] + moves[8],
+            moves[0] + moves[4] + moves[8],
+            moves[2] + moves[4] + moves[6]
+          ];
+
+          // Winner using includes()
+          if (winConditions.includes("XXX")) {
+            turnBox.innerHTML = "X Wins!";
+            gameOver = true;
+            return;
+          }
+
+          if (winConditions.includes("OOO")) {
+            turnBox.innerHTML = "O Wins!";
+            gameOver = true;
+            return;
+          }
+
+          // Check for stalemate
+          if (!moves.includes("-")) {
+            turnBox.innerHTML = "Stalemate!";
+            gameOver = true;
+            return;
+          }
+
+          // Switch player if game continues
+          currentPlayer = currentPlayer === "X" ? "O" : "X";
+          turnBox.innerHTML = currentPlayer + "'s Turn";
+        }
+      }
+    }
+  </script>
+
+  <hr />
+
+  <div class="turnBox">
+    X's Turn
+  </div> <!-- end box -->
+
+  <hr />
+
+  <div class="startgame">
+
+  <!-- reload to clear board -->
+  <button type="button" onclick="location.reload()">
+    Start Game
+  </button> <!-- end box -->
+  </div>
+
+</body>
+</html>
