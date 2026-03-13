@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Joe's Hotdogs</title>
+<style>
+body{
+  text-align:center;
+  font-family: Arial;
+}
+
+.menuBox{
+  border:1px solid black;
+  width:300px;
+  margin-left:auto;
+  margin-right:auto;
+  padding:15px;
+}
+
+button{
+  margin-top:10px;
+}
+</style>
+
+<script>
+window.onload = function()
+{
+
+menu = {
+  Hotdog:4,
+  Fries:3.50,
+  Soda:1.50,
+  Sauerkraut:1
+}
+
+// object to track quantities ordered
+
+cart = {
+  Hotdog:0,
+  Fries:0,
+  Soda:0,
+  Sauerkraut:0
+}
+
+// DISPLAY MENU ONLY ONCE
+
+menuDiv = document.getElementById("menu")
+
+for(food in menu)
+{
+  menuDiv.innerHTML += food + " - $" + menu[food] + "<br>"
+}
+
+// CREATE SELECT MENU FROM OBJECT
+
+select = document.getElementById("foodSelect")
+
+for(food in menu)
+{
+  option = document.createElement("option")
+  option.text = food
+  option.value = menu[food]
+  select.appendChild(option)
+}
+
+// ADD TO CART BUTTON
+
+document.getElementById("addBtn").onclick = function()
+{
+  selectedFood = select.options[select.selectedIndex].text
+  cart[selectedFood]++
+  updateCart()
+}
+
+// UPDATE SHOPPING CART DISPLAY
+
+function updateCart()
+{
+  cartDiv = document.getElementById("cart")
+  cartDiv.innerHTML = ""
+  for(food in cart)
+  {
+    if(cart[food] > 0)
+    {
+      cartDiv.innerHTML += food + " (Qty: " + cart[food] + ")<br>"
+    }
+  }
+}
+
+// CHECKOUT BUTTON
+
+document.getElementById("checkoutBtn").onclick = function()
+{
+  total = 0
+  message = "Order Summary\n\n"
+  for(food in cart)
+  {
+    if(cart[food] > 0)
+    {
+      cost = cart[food] * menu[food]
+      message += food + " x " + cart[food] + 
+                 " = $" + cost.toFixed(2) + "\n"
+      total += cost
+    }
+  }
+
+  message += "\nTotal: $" + total.toFixed(2)
+  alert(message)
+
+  // clear cart after checkout
+
+  for(food in cart)
+  {
+    cart[food] = 0
+  }
+  updateCart()
+}
+}
+</script>
+</head>
+
+<body>
+<h1>Joe's Hotdogs</h1>
+
+<hr />
+
+<div class="menuBox">
+
+<h3>Menu</h3>
+<div id="menu"></div>
+<br>
+
+<select id="foodSelect"></select>
+<br>
+
+<button id="addBtn">Add to Cart</button>
+<hr />
+
+<h3>Shopping Cart</h3>
+<div id="cart"></div>
+<button id="checkoutBtn">Checkout</button>
+</div>
+</body>
+</html>

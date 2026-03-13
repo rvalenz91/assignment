@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Joe's Hotdogs</title>
+<style>
+body{
+  text-align:center;
+  font-family: Arial;
+}
+
+.menuBox{
+  border:1px solid black;
+  width:300px;
+  margin-left:auto;
+  margin-right:auto;
+  padding:10px;
+  margin-bottom:20px;
+}
+</style>
+</head>
+
+<body>
+<h1>Joe's Hotdogs</h1>
+<hr />
+
+<script>
+// PART 1 – USING AN ASSOCIATIVE ARRAY
+
+// associative array for menu
+menu1 = []
+menu1["Hotdog"] = 4
+menu1["Fries"] = 3.50
+menu1["Soda"] = 1.50
+menu1["Sauerkraut"] = 1
+
+document.write("<div class='menuBox'>")
+document.write("<h3>Associative Array Menu</h3>")
+
+// menu using loop
+for(food in menu1)
+{
+  document.write(food + " - $" + menu1[food] + "<br>")
+}
+
+document.write("</div>")
+
+// PART 2 – USING AN OBJECT
+
+// object storing items and prices
+menu2 = {
+  Hotdog:4,
+  Fries:3.50,
+  Soda:1.50,
+  Sauerkraut:1
+}
+
+document.write("<div class='menuBox'>")
+document.write("<h3>Object Menu</h3>")
+
+for(food in menu2)
+{
+  document.write(food + " - $" + menu2[food] + "<br>")
+}
+
+document.write("</div>")
+
+// PART 3 – USING A CLASS
+
+// function construct
+function Food(name, price)
+{
+  this.name = name
+  this.price = price
+
+  // function to return menu string
+  this.showItem = function()
+  {
+    s = this.name + " - $" + this.price + "<br>"
+    return s
+  }
+}
+
+// array of class objects
+foods = [
+  new Food("Hotdog",4),
+  new Food("Fries",3.50),
+  new Food("Soda",1.50),
+  new Food("Sauerkraut",1)
+]
+
+document.write("<div class='menuBox'>")
+document.write("<h3>Class Menu</h3>")
+
+// display items
+foods.forEach(function(item){
+  document.write(item.showItem())
+})
+
+document.write("</div>")
+</script>
+
+</body>
+</html>
