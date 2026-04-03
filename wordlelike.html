@@ -1,0 +1,183 @@
+<html>
+<head>
+<title>Wordle Like Game</title>
+<style>
+h1 { text-align:center; }
+
+#board { text-align:center; max-width:260px; margin:auto; }
+.row { display:flex; justify-content:center; margin-bottom:5px; flex-wrap:wrap; }
+
+.cell {
+    width:40px; height:40px; line-height:40px;
+    border:1px solid black;
+    margin:2px; text-align:center;
+    font-weight:bold;
+    font-size:20px;
+    flex:1 1 40px;
+}
+
+.green { background:green; color:white; }
+.yellow { background:gold; }
+.gray { background:#ccc; }
+
+.turnBox {
+    text-align:center;
+    background-color: rgb(203, 22, 22);
+    color:white;
+    border:1px solid black;
+    height:40px;
+    width:120px;
+    margin:10px auto;
+    font-weight:bold;
+}
+
+#guessInput { text-align:center; font-size:18px; width:80px; }
+button { margin-left:5px; font-size:16px; }
+
+#usedLetters {
+    text-align:center;
+    margin-top:10px;
+    max-width:260px;
+    margin-left:auto;
+    margin-right:auto;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+.letterBox {
+    display:inline-block;
+    width:35px; height:35px;
+    line-height:35px;
+    border:1px solid black;
+    margin:2px;
+    font-weight:bold;
+    font-size:18px;
+    flex:1 1 30px;
+    text-align:center;
+}
+</style>
+</head>
+<body>
+
+<hr />
+<h1>Wordle Game</h1>
+<hr />
+
+<div id="board">
+<script>
+const ROWS = 6;
+const COLS = 5;
+
+// create board cells
+for (let r=0; r<ROWS; r++) {
+    document.write("<div class='row' id='row"+r+"'>");
+    for (let c=0; c<COLS; c++) {
+        document.write("<div class='cell' id='cell"+r+c+"'></div>");
+    }
+    document.write("</div>");
+}
+</script>
+</div>
+<hr />
+<div class="turnBox" id="turnBox">Guess 1</div>
+<div style="text-align:center; margin-top:10px;">
+<hr />
+<input type="text" maxlength="5" id="guessInput">
+<button onclick="submitGuess()">Guess</button>
+<button onclick="location.reload()">Restart</button>
+<hr />
+</div>
+
+<div id="usedLetters">
+<script>
+// create used A-Z
+const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+for (let l of letters) {
+    document.write("<div class='letterBox' id='letter"+l+"'>"+l+"</div>");
+}
+</script>
+</div>
+
+<script>
+// Game object
+const game = {
+    answer: "",
+    turn: 0,
+    maxTurns: 6,
+    debug:true
+};
+
+// word list
+const words = ["style","dance","color","peace","happy"];
+game.answer = words[Math.floor(Math.random()*words.length)];
+if (game.debug) console.log("Answer:", game.answer);
+
+// track used letters
+const used = {};
+
+// dictionary API
+function isValidWord(word){
+    return fetch("https://api.dictionaryapi.dev/api/v2/entries/en/"+word)
+        .then(res => res.ok)
+        .catch(()=>false);
+}
+
+// handle guess
+async function submitGuess(){
+    let guess = document.getElementById("guessInput").value.toLowerCase();
+    if (guess.length !== 5) { alert("Enter 5 letters"); return; }
+
+    let valid = await isValidWord(guess);
+    if (!valid) { alert("Not a valid word"); return; }
+
+    if (game.turn >= game.maxTurns) return;
+
+    let answerArr = game.answer.split("");
+    let guessArr = guess.split("");
+    let result = Array(5).fill("gray");
+
+    // green
+    for (let i=0;i<5;i++){
+        if (guessArr[i] === answerArr[i]){
+            result[i] = "green";
+            answerArr[i] = null;
+            guessArr[i] = null;
+        }
+    }
+
+    // yellow
+    for (let i=0;i<5;i++){
+        if (guessArr[i] && answerArr.includes(guessArr[i])){
+            result[i] = "yellow";
+            answerArr[answerArr.indexOf(guessArr[i])] = null;
+        }
+    }
+
+    // update board
+    for (let c=0;c<5;c++){
+        let cell = document.getElementById("cell"+game.turn+c);
+        cell.innerText = guess[c];
+        cell.className = "cell "+result[c];
+
+        // update used letters
+        let letterDiv = document.getElementById("letter"+guess[c].toUpperCase());
+        if (letterDiv.className.indexOf("green")===-1){ // keep green if already green
+            letterDiv.className = "letterBox "+result[c];
+        }
+    }
+
+    game.turn++;
+    if (guess === game.answer){
+        document.getElementById("turnBox").innerText = "You Win!";
+    } else if (game.turn === game.maxTurns){
+        document.getElementById("turnBox").innerText = "Game Over! Word: "+game.answer;
+    } else {
+        document.getElementById("turnBox").innerText = "Guess "+(game.turn+1);
+    }
+
+    document.getElementById("guessInput").value="";
+}
+</script>
+
+</body>
+</html>
