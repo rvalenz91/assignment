@@ -1,0 +1,161 @@
+<html>
+<head>
+<title>Wordle Like Game</title>
+<style>
+h1 { text-align:center; }
+#board { text-align:center; max-width:260px; margin:auto; }
+.row { display:flex; justify-content:center; margin-bottom:5px; flex-wrap:wrap; }
+.cell {
+    width:40px; height:40px; line-height:40px;
+    border:1px solid black;
+    margin:2px; text-align:center;
+    font-weight:bold;
+    font-size:20px;
+    flex:1 1 40px;
+}
+.green { background:green; color:white; }
+.yellow { background:gold; }
+.gray { background:#ccc; }
+
+#keyboard {
+    text-align:center;
+    max-width:300px;
+    margin:10px auto;
+}
+.keyRow {
+    display:flex;
+    justify-content:center;
+}
+.key {
+    width:35px; height:40px;
+    margin:2px;
+    border:1px solid black;
+    line-height:40px;
+    font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<hr />
+<h1>Wordle Like Game</h1>
+<hr />
+
+<div id="root"></div>
+
+// React + Babel
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel">
+
+// data
+const answer = "moody";
+const guesses = ["might", "flood", "stray"];
+const ROWS = 6;
+const COLS = 5;
+
+// evaluate guess
+function evaluateGuess(guess, answer){
+    let result = Array(5).fill("gray");
+    let answerArr = answer.split("");
+    let guessArr = guess.split("");
+
+    // green
+    for (let i=0;i<5;i++){
+        if (guessArr[i] === answerArr[i]){
+            result[i] = "green";
+            answerArr[i] = null;
+            guessArr[i] = null;
+        }
+    }
+
+    // yellow
+    for (let i=0;i<5;i++){
+        if (guessArr[i] && answerArr.includes(guessArr[i])){
+            result[i] = "yellow";
+            answerArr[answerArr.indexOf(guessArr[i])] = null;
+        }
+    }
+
+    return result;
+}
+
+// build board data
+let boardData = [];
+for (let r=0; r<ROWS; r++){
+    if (r < guesses.length){
+        let guess = guesses[r];
+        let result = evaluateGuess(guess, answer);
+        boardData.push({word: guess, colors: result});
+    } else {
+        boardData.push({word: "", colors: Array(5).fill("")});
+    }
+}
+
+// keyboard rows
+const keyboardRows = [
+    "QWERTYUIOP",
+    "ASDFGHJKL",
+    "ZXCVBNM"
+];
+
+// board component
+function Board(){
+    return (
+        <div id="board">
+            {boardData.map((row, r) => (
+                <div className="row" key={r}>
+                    {[...row.word].map((ch, c) => (
+                        <div className={"cell " + row.colors[c]} key={c}>
+                            {ch}
+                        </div>
+                    ))}
+                    {row.word.length < 5 &&
+                        Array(5 - row.word.length).fill("").map((_, i) => (
+                            <div className="cell" key={"e"+i}></div>
+                        ))
+                    }
+                </div>
+            ))}
+        </div>
+    );
+}
+
+// keyboard component
+function Keyboard(){
+    return (
+        <div id="keyboard">
+            {keyboardRows.map((row, i) => (
+                <div className="keyRow" key={i}>
+                    {[...row].map((key) => (
+                        <div className="key" key={key}>
+                            {key}
+                        </div>
+                    ))}
+                </div>
+            ))}
+        </div>
+    );
+}
+
+// app
+function App(){
+    return (
+        <div>
+            <Board />
+            <hr />
+            <Keyboard />
+        </div>
+    );
+}
+
+// render
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+
+</script>
+
+</body>
+</html>
